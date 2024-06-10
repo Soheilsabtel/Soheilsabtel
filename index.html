@@ -24,6 +24,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            height: 80vh; /* Added height to ensure the container has a fixed height */
         }
         .chat-header {
             background-color: #0088cc;
@@ -35,7 +36,7 @@
         .chat-messages {
             flex: 1;
             padding: 10px;
-            overflow-y: auto;
+            overflow-y: auto; /* Ensure the messages are scrollable */
         }
         .message {
             background-color: #0088cc;

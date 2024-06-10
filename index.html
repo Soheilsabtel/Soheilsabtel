@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>Telegram-like Chat</title>
     <style>
         body {
@@ -55,18 +55,35 @@
             background-color: #e5e5ea;
             color: #000;
         }
+        .message img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
         .chat-input {
             display: flex;
             padding: 7px;
             background-color: #f9f9f9;
             border-top: 1px solid #ddd;
         }
-        .chat-input input {
+        .chat-input input[type="text"] {
             flex: 1;
             padding: 7px;
             border: 1px solid #ddd;
             border-radius: 20px;
             outline: none;
+        }
+        .chat-input input[type="file"] {
+            display: none;
+        }
+        .chat-input label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            background-color: #0088cc;
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
         }
         .chat-input button {
             background-color: #0088cc;
@@ -91,6 +108,8 @@
         </div>
         <div class="chat-input">
             <input type="text" id="message-input" placeholder="Type a message...">
+            <input type="file" id="image-input" accept="image/*">
+            <label for="image-input"><i class="material-icons">attach_file</i></label>
             <button onclick="sendMessage()"><i class="material-icons">send</i></button>
         </div>
     </div>
@@ -98,23 +117,36 @@
     <script>
         function sendMessage() {
             const input = document.getElementById('message-input');
+            const imageInput = document.getElementById('image-input');
+            const messagesContainer = document.getElementById('chat-messages');
             const messageText = input.value.trim();
-            if (messageText !== '') {
-                const messagesContainer = document.getElementById('chat-messages');
-                
-                // Create message element
+            const imageFile = imageInput.files[0];
+
+            if (messageText !== '' || imageFile) {
                 const messageElement = document.createElement('div');
                 messageElement.classList.add('message', 'sent');
-                messageElement.textContent = messageText;
-                
-                // Append message to container
-                messagesContainer.appendChild(messageElement);
-                
-                // Scroll to the bottom
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                
-                // Clear the input
+
+                if (messageText !== '') {
+                    messageElement.textContent = messageText;
+                }
+
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        messageElement.appendChild(img);
+                        messagesContainer.appendChild(messageElement);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    messagesContainer.appendChild(messageElement);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+
                 input.value = '';
+                imageInput.value = '';
             }
         }
 
